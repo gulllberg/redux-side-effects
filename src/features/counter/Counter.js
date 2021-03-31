@@ -1,60 +1,39 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-  decrement,
-  increment,
-  incrementByAmount,
-  incrementAsync,
-  selectCount,
+    userSubmit,
+    selectCount,
+    selectFetching,
 } from './counterSlice';
 import styles from './Counter.module.css';
 
 export function Counter() {
-  const count = useSelector(selectCount);
-  const dispatch = useDispatch();
-  const [incrementAmount, setIncrementAmount] = useState('2');
+    const count = useSelector(selectCount);
+    const fetching = useSelector(selectFetching);
+    const dispatch = useDispatch();
 
-  return (
-    <div>
-      <div className={styles.row}>
-        <button
-          className={styles.button}
-          aria-label="Increment value"
-          onClick={() => dispatch(increment())}
+    return (
+        <div>
+            <div className={styles.row}>
+        <span
+            data-testid="sideEffectsCounter"
+            className={styles.value}
         >
-          +
-        </button>
-        <span className={styles.value}>{count}</span>
-        <button
-          className={styles.button}
-          aria-label="Decrement value"
-          onClick={() => dispatch(decrement())}
-        >
-          -
-        </button>
-      </div>
-      <div className={styles.row}>
-        <input
-          className={styles.textbox}
-          aria-label="Set increment amount"
-          value={incrementAmount}
-          onChange={e => setIncrementAmount(e.target.value)}
-        />
-        <button
-          className={styles.button}
-          onClick={() =>
-            dispatch(incrementByAmount(Number(incrementAmount) || 0))
-          }
-        >
-          Add Amount
-        </button>
-        <button
-          className={styles.asyncButton}
-          onClick={() => dispatch(incrementAsync(Number(incrementAmount) || 0))}
-        >
-          Add Async
-        </button>
-      </div>
-    </div>
-  );
+          {count}
+        </span>
+            </div>
+            <div className={styles.row}>
+                <button
+                    data-testid="sideEffectsButton"
+                    className={styles.button}
+                    // Dispatch a simple action (just sets a state value), free from side effects
+                    onClick={() => dispatch(userSubmit())}
+                    // No need to for example disable the button. User can click as many times as they want, the side effect does not happen again while already fetching.
+                >
+                    {/* Update component according to current state (in this case if fetching) */}
+                    {`Add With Side Effects${fetching ? ' - fetching' : ''}`}
+                </button>
+            </div>
+        </div>
+    );
 }

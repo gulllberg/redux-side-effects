@@ -5,14 +5,25 @@ import App from './App';
 import store from './app/store';
 import { Provider } from 'react-redux';
 import * as serviceWorker from './serviceWorker';
+import { sideEffects } from './features/counter/counterSlice';
+
+store.subscribe(function () {
+    // Dependency inject things like fetch (in this example we just replace it with a timeout)
+    sideEffects({
+        ...store,
+        fetch: function (url, callback) {
+            setTimeout(callback, 1000);
+        },
+    });
+});
 
 ReactDOM.render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <App />
-    </Provider>
-  </React.StrictMode>,
-  document.getElementById('root')
+    <React.StrictMode>
+        <Provider store={store}>
+            <App/>
+        </Provider>
+    </React.StrictMode>,
+    document.getElementById('root')
 );
 
 // If you want your app to work offline and load faster, you can change
